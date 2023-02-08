@@ -1,3 +1,3 @@
 # movies-explorer-api
 
-(Ссылка на проект)[https://api.superfilms.nomoredomainsclub.ru/]
+[Ссылка на проект](https://api.superfilms.nomoredomainsclub.ru/)
