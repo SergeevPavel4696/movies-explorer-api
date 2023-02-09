@@ -6,14 +6,17 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const AlreadyExistsError = require('../errors/AlreadyExistsError');
 const getSecretKey = require('../utils/secretKey');
+const {
+  duplicateUser, incorrectData, userNotFound, IDontExist, incorrectEmailOrPassword, goodbye,
+} = require('../utils/constants');
 
 const createUser = (req, res, next) => {
   const {
-    name, email, password,
+    email, password, name,
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({ name, email, password: hash })
+      User.create({ email, password: hash, name })
         .then((user) => {
           const newUser = user.toObject();
           delete newUser.password;
@@ -21,9 +24,9 @@ const createUser = (req, res, next) => {
         })
         .catch((err) => {
           if (err.code === 11000) {
-            next(new AlreadyExistsError('Пользователь с указанным email уже существует.'));
+            next(new AlreadyExistsError(duplicateUser));
           } else if (err.name === 'ValidationError') {
-            next(new BadRequestError('Переданы некорректные данные.'));
+            next(new BadRequestError(incorrectData));
           } else {
             next(err);
           }
@@ -43,12 +46,12 @@ const updateUser = (req, res, next) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError('Пользователь не найден.');
+        throw new NotFoundError(userNotFound);
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные.'));
+        next(new BadRequestError(incorrectData));
       } else {
         next(err);
       }
@@ -64,12 +67,12 @@ const getUser = (req, res, next) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError('Пользователь не найден.');
+        throw new NotFoundError(userNotFound);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные.'));
+        next(new BadRequestError(incorrectData));
       } else {
         next(err);
       }
@@ -93,7 +96,7 @@ const getMe = (req, res, next) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError('Меня нет.');
+        throw new NotFoundError(IDontExist);
       }
     })
     .catch(next);
@@ -119,18 +122,18 @@ const login = (req, res, next) => {
               });
               res.send({ token });
             } else {
-              throw new UnAuthorizedError('Неправильные почта или пароль.');
+              throw new UnAuthorizedError(incorrectEmailOrPassword);
             }
           });
       } else {
-        throw new UnAuthorizedError('Неправильные почта или пароль.');
+        throw new UnAuthorizedError(incorrectEmailOrPassword);
       }
     })
     .catch(next);
 };
 
 const out = (req, res) => {
-  res.clearCookie('token').send({ message: 'До свидания.' });
+  res.clearCookie('token').send({ message: goodbye });
 };
 
 module.exports = {
