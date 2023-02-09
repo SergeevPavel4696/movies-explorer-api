@@ -28,7 +28,7 @@ const movieSchema = new mongoose.Schema({
       validator: (v) => /^(https?:\/\/)(www\.)?[\w-]+(\.[a-z])+[\w~!@#$%&*()-+=:;\\'",.?/]+#?/i.test(v),
     },
   },
-  trailer: {
+  trailerLink: {
     type: String,
     required: true,
     validate: {
