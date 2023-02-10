@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const errors = require('celebrate');
+const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const getDBAdress = require('./src/utils/mongoDB');
@@ -10,7 +10,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 /* const cors = require('./src/middlewares/cors'); */
 const { requestLogger, errorLogger } = require('./src/middlewares/logger');
 const router = require('./src/routes/ruoter');
-const rateLimiter = require('./src/middlewares/rateLimiter');
+const { rateLimiter } = require('./src/middlewares/rateLimiter');
 
 const { PORT = 3000 } = process.env;
 const app = express();
